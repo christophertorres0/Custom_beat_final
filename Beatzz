@@ -1,5 +1,4 @@
-# Welcome to my Song
-
+# Welcome to Sonic Pi v2.11.1
 
 use_bpm 160
 use_synth :piano
@@ -9,32 +8,26 @@ kick = [:g4, :e4, :c4]
 #The sample I used sounded chaotic so I liked it
 audio = "C:/Users/christopher_torres/Desktop/audio (1).wav"
 x = 2
-define :thing do #Explain this
-  sample audio
-  sleep
+define :thing do
+  sample audio, amp: 0.01
+  sleep 32
 end
-
-1.times do
-  sample audio
-  sleep 20
-end
-
 live_loop :song do
   4.times do
     play :fb5, amp: x
     sleep 0.5
     play :db5, amp: x
     sleep 0.5
-    play :ab4, amp: x 
+    play :ab4, amp: x
     sleep 0.5
     play :db5, amp: x
     sleep 0.5
-    x = 1 + 2
+    x = x + 2
   end
 end
 sleep 10
 live_loop :song do
-  index = 0 #I have multiply index points, which at which number it will start from mine starts from (0) then goes 1234 and so forth
+  index = 0
   
   play array
   sleep 0.5
@@ -46,7 +39,7 @@ live_loop :song do
     play array
     sleep 0.5
   end
-  :r #Why?
+  :r
   sleep 0.5
   
   play array
@@ -78,7 +71,7 @@ live_loop :song do
   live_loop :random do
     use_octave [0, 2].choose #Uses random notes and pulls certain notes to play in random order
     play [:c, :e, :g].choose
-    sleep [0.25, 0.5, 1, 2].choose
+    sleep [0.25, 0.25, 0.5, 1].choose
   end
   
 end
@@ -117,17 +110,11 @@ live_loop :kicker do
     sample :drum_heavy_kick
     sleep 0.5
   end
-  #R or rest gives the beats time to appear almost like sleep
+  
   :r
   sleep 0.5
-  
-  
-  live_loop :random2 do
-    # assign a value to 'c' that will be used as the index value
-    c = [:c2, :e2, :g2, :b2, :c3, :b2,]
-    print c
-    play c [rrand_i(0,7)]
-    sleep 0.5
-  end
-  
+end
+sleep 32
+live_loop :loopin do
+  thing
 end
