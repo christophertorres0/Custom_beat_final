@@ -1,5 +1,7 @@
 # Welcome to Sonic Pi v2.11.1
 
+
+
 use_bpm 160
 use_synth :piano
 #The array picks out different notes to play
@@ -7,114 +9,165 @@ array = [:g3, :e3, :c3]
 kick = [:g4, :e4, :c4]
 #The sample I used sounded chaotic so I liked it
 audio = "C:/Users/christopher_torres/Desktop/audio (1).wav"
-x = 2
-define :thing do
-  sample audio, amp: 0.01
-  sleep 32
-end
-live_loop :song do
-  4.times do
-    play :fb5, amp: x
-    sleep 0.5
-    play :db5, amp: x
-    sleep 0.5
-    play :ab4, amp: x
-    sleep 0.5
-    play :db5, amp: x
-    sleep 0.5
-    x = x + 2
-  end
-end
-sleep 10
-live_loop :song do
-  index = 0
-  
-  play array
-  sleep 0.5
-  
-  play array, sustain: 1
-  sleep 1
-  
-  2.times do
-    play array
-    sleep 0.5
-  end
-  :r
-  sleep 0.5
-  
-  play array
-  sleep 0.5
-  
-  :r
-  sleep 0.5
-  
-  play array
-  sleep 0.5
-  
-  play array
-  sleep 1
-  
-  2.times do
-    play array
-    sleep 0.5
-    play :g3
-    sleep 0.5
-  end
-  
-  :r
-  sleep 0.5
-  live_loop :lit do
-    sample audio
-    sleep 16
-  end
-  
-  live_loop :random do
-    use_octave [0, 2].choose #Uses random notes and pulls certain notes to play in random order
-    play [:c, :e, :g].choose
-    sleep [0.25, 0.25, 0.5, 1].choose
-  end
-  
-end
 
-live_loop :kicker do
-  index = 0
-  
-  sample :drum_heavy_kick
-  sleep 0.5
-  
-  sample :drum_heavy_kick, sustain: 1
-  sleep 1
-  
-  2.times do
-    sample :drum_heavy_kick
-    sleep 0.5
-  end
-  :r
-  sleep 0.5
-  
-  sample :drum_heavy_kick
-  sleep 0.5
-  
-  :r
-  sleep 0.5
-  
-  sample :drum_heavy_kick
-  sleep 0.5
-  
-  sample :drum_heavy_kick
-  sleep 1
-  
-  2.times do
-    sample :drum_heavy_kick
-    sleep 0.5
-    sample :drum_heavy_kick
-    sleep 0.5
+x = 2
+begin
+  define :thing do
+    sample audio, amp: 0.01
+    sleep 32
   end
   
-  :r
-  sleep 0.5
-end
-sleep 32
-live_loop :loopin do
-  thing
+  use_synth :piano
+  
+  use_bpm 88
+  
+  define :play_phrase do
+    play_pattern_timed [72, 70, 72, 67, 65, 70, 62, 60], #These notes are from Clocks by coldplay
+      [0.25, 0.25, 0.5, 0.25, 0.5, 0.5, 0.25, 0.25]
+  end
+  
+  # this thread plays the phrase consistently
+  with_fx :pan, pan: -0.7 do
+    in_thread(name: :steady) do
+      40.times do
+        play_phrase
+        sleep 0.25
+      end
+    end
+  end
+  
+  # this thread shifts the phrase 1/4 beat later on every 3rd pass
+  with_fx :pan, pan: 0.5 do
+    in_thread(name: :phasing) do
+      13.times do
+        3.times do |count|
+          play_phrase
+          # last time, wait an extra 0.25 before starting the phrase again
+          sleep (count == 2 ? 0.5 : 0.25)
+        end
+      end
+    end
+  end
+  
+  
+  
+  
+  sleep 10
+  live_loop :song do
+    index = 0
+    
+    play array
+    sleep 0.5
+    
+    play array, sustain: 1
+    sleep 1
+    
+    2.times do
+      play array
+      sleep 0.5
+    end
+    :r
+    sleep 0.5
+    
+    play array
+    sleep 0.5
+    
+    :r
+    sleep 0.5
+    
+    play array
+    sleep 0.5
+    
+    play array
+    sleep 1
+    
+    2.times do
+      play array
+      sleep 0.5
+      play :g3
+      sleep 0.5
+    end
+    
+    use_synth :piano
+    
+    use_bpm 88
+    
+    define :play_phrase do
+      play_pattern_timed [72, 70, 72, 67, 65, 70, 62, 60], #These notes are from Clocks by coldplay
+        [0.25, 0.25, 0.5, 0.25, 0.5, 0.5, 0.25, 0.25]
+    end
+    
+    # this thread plays the phrase consistently
+    with_fx :pan, pan: -0.7 do
+      in_thread(name: :steady) do
+        40.times do
+          play_phrase
+          sleep 0.25
+        end
+      end
+    end
+    
+    # this thread shifts the phrase 1/4 beat later on every 3rd pass
+    with_fx :pan, pan: 0.5 do
+      in_thread(name: :phasing) do
+        13.times do
+          3.times do |count|
+            play_phrase
+            # last time, wait an extra 0.25 before starting the phrase again
+            sleep (count == 2 ? 0.5 : 0.25)
+          end
+        end
+      end
+    end
+    
+    live_loop :random do
+      use_octave [0, 2].choose #Uses random notes and pulls certain notes to play in random order
+      play [:c, :e, :g].choose
+      sleep [0.25, 0.25, 0.5, 1].choose
+    end
+    
+  end
+  
+  live_loop :kicker do
+    index = 0
+    
+    sample :drum_heavy_kick
+    sleep 0.5
+    
+    sample :drum_heavy_kick, sustain: 1
+    sleep 3
+    
+    2.times do
+      sample :drum_heavy_kick
+      sleep 0.5
+    end
+    :r
+    sleep 0.5
+    
+    sample :drum_heavy_kick
+    sleep 0.5
+    
+    :r
+    sleep 0.5
+    
+    sample :drum_heavy_kick
+    sleep 0.5
+    
+    sample :drum_heavy_kick
+    sleep 1
+    
+    2.times do
+      sample :drum_heavy_kick
+      sleep 0.5
+      sample :drum_heavy_kick
+      sleep 0.5
+    end
+    
+    :r
+    sleep 0.5
+  end
+  sleep 32
+  live_loop :loopin do
+    thing
+  end
 end
